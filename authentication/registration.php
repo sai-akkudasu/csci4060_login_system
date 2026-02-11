@@ -1,11 +1,6 @@
 <?php
-  session_start();
   require "db_connection.php";
-  
-  if (isset($_SESSION['user_id'])) {
-    header("Location: dashboard.php");
-    exit();
-  }
+
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form data
     $name = $_POST['name'];
