@@ -1,4 +1,5 @@
 <?php
+  session_start();
   require "db_connection.php";
 
   function error_alert($url){
@@ -19,6 +20,10 @@
     if($stmt->num_rows > 0){
       $stmt->bind_result($id, $name);
       $stmt->fetch();
+  
+      $_SESSION['user_id'] = $id;
+      $_SESSION['user_name'] = $name;
+      $_SESSION['user_email'] = $email;
       header("Location: dashboard.php");
       exit();
     }else{
