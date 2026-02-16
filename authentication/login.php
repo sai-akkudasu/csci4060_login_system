@@ -13,22 +13,30 @@
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $stmt = $con->prepare("SELECT id, name FROM users WHERE email = ? AND password = ?");
-    $stmt->bind_param("ss", $email, $password);
+  
+    $stmt = $con->prepare("SELECT id, name, password FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
     $stmt->execute();
-    $stmt->store_result();
+    $stmt->store_result();  
+  
     if($stmt->num_rows > 0){
-      $stmt->bind_result($id, $name);
+      $stmt->bind_result($id, $name, $hashed_password);
       $stmt->fetch();
   
-      $_SESSION['user_id'] = $id;
-      $_SESSION['user_name'] = $name;
-      $_SESSION['user_email'] = $email;
-      header("Location: dashboard.php");
-      exit();
-    }else{
+      // Verify the password
+      if(password_verify($password, $hashed_password)){
+        $_SESSION['user_id'] = $id;
+        $_SESSION['user_name'] = $name;
+        $_SESSION['user_email'] = $email;
+        header("Location: dashboard.php");
+        exit();
+      } else {
+        error_alert("login.php");
+      }
+    } else {
       error_alert("login.php");
     }
+  
     $stmt->close();
   }
 ?>
